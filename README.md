@@ -31,9 +31,9 @@ __Setup up database:__
 > mysql -u your_username -p product_registration < schema.sql
 ```
 
-__Temporarily hand-edit the connection string in `app.py`:__
+__Edit the db connection string in `config.py` (local development):__
 ```
-app.config["SQLALCHEMY_DATABASE_URI"] = "mysql+pymysql://user:pass@localhost/product_registration"
+DB_CONN_STR = 'mysql+pymysql://user:pass@localhost/product_registration'
 ```
 
 __Install dependencies:__
@@ -42,23 +42,27 @@ __Install dependencies:__
 > pip install -r requirements.txt
 ```
 
-__Spin up server:__
+__Spin up server (local development):__
 
 ```
-> python app.py
+> python app.py --dev
 ```
+
+## DEPLOY
+
+Follow steps in above section with the exception of setting environment variables in `config.py`.
+
+_more info on deployment to come..._
 
 ## TODOs
-
-- Use proper configuration for db connection and secret pin
-- Document virtualenv in README
-- Set up emailer
-- Rate limit post endpoints
+- Deploy to AWS EC2 (DNS/SSL/SES/RDS/EB)
 - Hook up with https://github.com/openemr/openemr/pull/257
-- Split out code into proper folders
 - Testing and code reviews
 - Instruct OEMR board on how to use this service
-- Deploy to AWS EC2 (DNS/SSL/SES/RDS/EB)
+- Support fancy HTML templates
+- Split out code into proper folders
+- Rate limit post endpoints
+- Document virtualenv in README
 
 ## LICENSE
 

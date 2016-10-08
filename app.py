@@ -5,10 +5,10 @@ from Exceptions import InvalidEmailMessageException, AlreadyRegisteredException,
 from flask_sqlalchemy import SQLAlchemy
 from flask import request
 import Logger
+from config import Config
 
 app = Flask(__name__)
-
-app.config["SQLALCHEMY_DATABASE_URI"] = "mysql+pymysql://root:@localhost/product_registration"
+app.config["SQLALCHEMY_DATABASE_URI"] = Config.DB_CONN_STR
 
 db.init_app(app)
 

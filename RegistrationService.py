@@ -5,6 +5,7 @@ from validate_email import validate_email
 from Exceptions import AlreadyRegisteredException, InvalidSecretPinException, InvalidEmailMessageException, InvalidEmailException
 import uuid
 import Logger
+from config import Config
 
 emailer = EmailerService()
 
@@ -39,14 +40,11 @@ class RegistrationService:
     return Product.query.all()
 
   def broadcastToRegisteredUsers(self, secretPin, title, contents):
-    # TODO: use proper config management
-    if (secretPin != "my secret pin"):
+    if (secretPin != Config.SECRET_PIN):
       raise InvalidSecretPinException("Invalid secret pin")
 
     if title == None or contents == None:
       raise InvalidEmailMessageException("Include title and contents for the message")
 
-    Logger.info("Attempting to broadcast an email with title: " + title)
-
     for registration in self.getUniqueRegistrations():
-      emailer.send(registration.email, "no-reply@open-emr.org", title, contents)
+      emailer.send(registration.email, title, contents)
