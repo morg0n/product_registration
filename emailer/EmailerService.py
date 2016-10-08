@@ -1,5 +1,5 @@
-import Logger
-from config import Config
+from logger import Logger
+from config.Config import Config
 import boto.ses
 
 class EmailerService:

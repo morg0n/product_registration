@@ -1,11 +1,11 @@
-from database import db
-from Models import Product
-from EmailerService import EmailerService
+from database.Database import db
+from models.Models import Product
+from errors.Exceptions import InvalidEmailException, AlreadyRegisteredException, InvalidSecretPinException, InvalidEmailMessageException
+from emailer.EmailerService import EmailerService
 from validate_email import validate_email
-from Exceptions import AlreadyRegisteredException, InvalidSecretPinException, InvalidEmailMessageException, InvalidEmailException
 import uuid
-import Logger
-from config import Config
+from logger import Logger
+from config.Config import Config
 
 emailer = EmailerService()
 

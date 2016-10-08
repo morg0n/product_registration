@@ -50,19 +50,50 @@ __Spin up server (local development):__
 
 ## DEPLOY
 
-Follow steps in above section with the exception of setting environment variables in `config.py`.
+1. Follow steps in above section with the exception of setting environment variables in config.py.
+2. Go to RDS > Get started now > Mysql (free tier) > "Only show options that are eligble for RDS Free Tier"
+3. Enter 5.6.27 for DB Engine version
+4. Select db.t1.micro for DB instance class
+5. Enter product-registration for "DB instance instance identifier"
+6. Enter username/password
+7. Accept default options and Launch DB instance
+8. Click "View your db instances"
+9. note the endpoint
+10. Using your favorite database tool (e.x.: MySQL Workbench), run schema.sql against the new RDS instance
+11. Go to SES > Manage Identities > SMTP Settings
+12. Note the server name
+13. Click Create My SMTP Credentials
+14. Note SMTP user credentials
+15. `> eb init product-registration`
+16. For region, enter 1
+17. To get access/secret keys, go to IAM Console > Users > IAM user > Security Credentials > Create Access Key
+19. Specify Python 2.7 for the platform
+20. Enter n for SSH
+21. `> eb create`
+22. Enter product-registration for environment name
+23. Enter product-registration for DNS CNAME prefix
+24. Enter 1 for load balancer type
+25. Skip "specify your own role"
+26. Note the elastic beanstalk address
+27. To set environment variables, go to Elastic Beanstalk > All Applications > product-registration > Configuration > Software Configuration > Environment Properties
 
-_more info on deployment to come..._
+_Note the following AWS gotchas:_
+- You must name the main file `application.py`
+- You must name the Flask object `application`
+- You must call `application.run(host='0.0.0.0')` as `application.run()` doesn't expose the server properly
+- If you add a new environment variable, add it to environment-variables.config as eb needs a default
+
+## LOGS
+
+- Local development logs are in `logger/dev.log`
+- Production logs are in `/opt/python/log/openemr-product-registration.log`
 
 ## TODOs
-- Deploy to AWS EC2 (DNS/SSL/SES/RDS/EB)
+- Purchase domain name/SSL cert and setup/document Route 53 configuration
 - Hook up with https://github.com/openemr/openemr/pull/257
+- Setup RDS in production mode
 - Testing and code reviews
 - Instruct OEMR board on how to use this service
-- Support fancy HTML templates
-- Split out code into proper folders
-- Rate limit post endpoints
-- Document virtualenv in README
 
 ## LICENSE
 
