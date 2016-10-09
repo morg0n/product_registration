@@ -57,8 +57,8 @@ __Spin up server (local development):__
 5. Enter product-registration for "DB instance instance identifier"
 6. Enter username/password
 7. Accept default options and Launch DB instance
-8. Click "View your db instances"
-9. note the endpoint
+8. Click "View your db instances" and wait a few moments
+9. Note the endpoint
 10. Using your favorite database tool (e.x.: MySQL Workbench), run schema.sql against the new RDS instance
 11. Go to SES > Manage Identities > SMTP Settings
 12. Note the server name
@@ -67,15 +67,19 @@ __Spin up server (local development):__
 15. `> eb init product-registration`
 16. For region, enter 1
 17. To get access/secret keys, go to IAM Console > Users > IAM user > Security Credentials > Create Access Key
-19. Specify Python 2.7 for the platform
-20. Enter n for SSH
-21. `> eb create`
-22. Enter product-registration for environment name
-23. Enter product-registration for DNS CNAME prefix
-24. Enter 1 for load balancer type
-25. Skip "specify your own role"
-26. Note the elastic beanstalk address
-27. To set environment variables, go to Elastic Beanstalk > All Applications > product-registration > Configuration > Software Configuration > Environment Properties
+18. Specify Python 2.7 for the platform
+19. Enter n for SSH
+20. `> eb create`
+21. Enter product-registration for environment name
+22. Enter product-registration for DNS CNAME prefix
+23. Enter 1 for load balancer type and wait a few moments
+24. Note the elastic beanstalk address
+25. Note the elastic beanstalk security group
+26. To set environment variables, go to Elastic Beanstalk > All Applications > product-registration > Configuration > Software Configuration > Environment Properties
+27. To allow Elastic Beanstalk to connect to RDS, go to RDS > instances > expand instance > Instance Actions > See Details
+28. Click on the security group
+29. With the security group page in view, right click on the security group and select "Edit inbounds rules"
+30. In the far right column, enter the EBS security group
 
 _Note the following AWS gotchas:_
 - You must name the main file `application.py`
@@ -89,6 +93,9 @@ _Note the following AWS gotchas:_
 - Production logs are in `/opt/python/log/openemr-product-registration.log`
 
 ## TODOs
+- Clean up instances from testing
+- Correct SES configuration issues
+- Ensure security groups/firewalls are configured securely
 - Purchase domain name/SSL cert and setup/document Route 53 configuration
 - Hook up with https://github.com/openemr/openemr/pull/257
 - Setup RDS in production mode
