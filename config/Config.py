@@ -1,9 +1,11 @@
 import sys
 import os
 
+# Note: if you add a new variable, add it to environment-variables.config
 class Config(object):
-  if len(sys.argv) == 2 and sys.argv[1] == "--dev":
-    # These configs are for local development only
+  DEV_MODE = len(sys.argv) == 2 and sys.argv[1] == "--dev"
+
+  if DEV_MODE:
     SECRET_PIN = 'secret'
     DB_CONN_STR = 'mysql+pymysql://user:pass@localhost/product_registration'
     SES_ACCESS_ID = 'id'

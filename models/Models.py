@@ -1,4 +1,4 @@
-from Database import db
+from database.Database import db
 
 class Product(db.Model):
   uuid = db.Column(db.String(36), unique=True, primary_key=True)
