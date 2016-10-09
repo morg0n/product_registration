@@ -15,7 +15,7 @@ registrationService = RegistrationService()
 
 @application.route("/")
 def default():
-  return "hello world"
+  return (jsonify({"status": "up"}), 200)
 
 @application.route("/api/registration", methods=["POST"])
 def postRegistration():

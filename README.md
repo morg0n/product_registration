@@ -1,13 +1,13 @@
 # OpenEMR Product Registration
 
-This is a very simple REST backend that allows new and current OpenEMR users to register their product with OEMR 501(c)(3). In return, they will receive important software update and security patch email updates. This service will run on AWS (EC2/EB/SES/RDS) and users of OpenEMR submit their email that will be sent to this remote server.
+This is a very simple REST service that allows new and current OpenEMR users to register their product with OEMR 501(c)(3). In return, they will receive important software update and security patch email updates. This service will run on AWS (EC2/EB/SES/RDS) and users of OpenEMR submit their email that will be sent to this remote server.
 
 ## REST API OVERVIEW
 
 __HTTP POST /api/registration__
 - INPUT: Unique `email` to be stored in MySQL along with a product `uuid`
 - OUTPUT: `{"productId": "55cd33ef-f6dd-4d28-925d-d652da3d70b2" }` HTTP 201
-- THROWS: `AlreadyRegisteredException` HTTP 500, `InvalidEmailException` HTTP 400
+- THROWS: `AlreadyRegisteredException` HTTP 409, `InvalidEmailException` HTTP 400
 
 __HTTP POST /api/registration/broadcast__
 - INPUT: `secretPin`, `title`, and `contents` to be sent to all registered users
@@ -48,6 +48,17 @@ __Spin up server (local development):__
 > python app.py --dev
 ```
 
+## i18n
+
+This service is simple enough at the moment that the HTTP return statuses will indicate what to display to a consumer with reading the contents of the message. For instance, `AlreadyRegisteredException` throws a HTTP 409 and `InvalidEmailException` throws a HTTP 400. Both of these statuses will be handled in OpenEMR layer with custom user messages that are translated.
+
+The only exception at this time is with the `HTTP POST /api/registration/broadcast` endpoint, which returns various HTTP responses that one will need to see the contents of (which are written in english). However, this is acceptable because this endpoint is to be used exclusively by the OEMR 501(c)(3) board which is all english speaking.
+
+## LOGS
+
+- Local development logs are in `logger/dev.log`
+- Production logs are in `/opt/python/log/openemr-product-registration.log` - can be viewed through graphical website via EB > product-registration > logs
+
 ## DEPLOY
 
 1. Follow steps in above section with the exception of setting environment variables in config.py.
@@ -60,10 +71,10 @@ __Spin up server (local development):__
 8. Click "View your db instances" and wait a few moments
 9. Note the endpoint
 10. Using your favorite database tool (e.x.: MySQL Workbench), run schema.sql against the new RDS instance
-11. Go to SES > Manage Identities > SMTP Settings
-12. Note the server name
-13. Click Create My SMTP Credentials
-14. Note SMTP user credentials
+11. Go to SES > Manage Identities > Email addresses > Verify a new email address
+12. Enter in "openemrnoreply@gmail.com"
+13. Click verify this email address
+14. Go to gmail and wait for the verification link to come in
 15. `> eb init product-registration`
 16. For region, enter 1
 17. To get access/secret keys, go to IAM Console > Users > IAM user > Security Credentials > Create Access Key
@@ -80,6 +91,8 @@ __Spin up server (local development):__
 28. Click on the security group
 29. With the security group page in view, right click on the security group and select "Edit inbounds rules"
 30. In the far right column, enter the EBS security group
+31. To prevent RDS from being publically accessible, go to RDS > instances > expand instance > Instance Actions > Modify
+32. Set publically accessible to no
 
 _Note the following AWS gotchas:_
 - You must name the main file `application.py`
@@ -87,20 +100,33 @@ _Note the following AWS gotchas:_
 - You must call `application.run(host='0.0.0.0')` as `application.run()` doesn't expose the server properly
 - If you add a new environment variable, add it to environment-variables.config as eb needs a default
 
-## LOGS
+## PUSHING CHANGES
 
-- Local development logs are in `logger/dev.log`
-- Production logs are in `/opt/python/log/openemr-product-registration.log`
+When new changes are committed and need to be deployed to production, simply run `> eb deploy product-registration`.
 
 ## TODOs
-- Clean up instances from testing
-- Correct SES configuration issues
-- Ensure security groups/firewalls are configured securely
-- Purchase domain name/SSL cert and setup/document Route 53 configuration
+
 - Hook up with https://github.com/openemr/openemr/pull/257
-- Setup RDS in production mode
+- Purchase domain name/SSL cert and setup/document Route 53 configuration
 - Testing and code reviews
-- Instruct OEMR board on how to use this service
+- Find/create "OEMR 501(c)(3) Shared Secrets" document
+- Deploy service in a production context (setup RDS in production mode, move out of the Amazon SES sandbox mode, and update these docs)
+
+## POST VERSION 1.0.0 TODOs
+
+- Allow for custom HTML emails
+- Use a open-emr.org noreply email sender instead of the gmail sender
+- Store registration IP address in table to prevent spam (?)
+
+## OEMR 501(c)(3) INSTRUCTIONS
+
+Greetings OEMR 501(c)(3) board. This section intends to explain, in plain english, how to get information about registered users and send them important updates about OpenEMR via bulk emailing.
+
+- To see how many users have registered their OpenEMR instance, direct your browser to [https://reg.open-emr.org/api/registration/unique](https://reg.open-emr.org/api/registration/unique). This will return a count of registered users. Please note you will need to total this number with that of SourceForge downloads (there is overlap here, of course).
+
+- To email all registered users an important update email about OpenEMR, download and run [Postman](https://www.getpostman.com/) Chrome application. Config postman/compose your message as seen below (note the "secretPin" lives in the OEMR 501(c)(3) Shared Secrets document):
+
+![img](instructions-for-emailer.png)
 
 ## LICENSE
 
