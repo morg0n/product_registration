@@ -115,6 +115,7 @@ When new changes are committed and need to be deployed to production, simply run
 ## POST VERSION 1.0.0 TODOs
 
 - Allow for custom HTML emails
+- Allow users to "opt-out" of emails
 - Use a open-emr.org noreply email sender instead of the gmail sender
 - Store registration IP address in table to prevent spam (?)
 
