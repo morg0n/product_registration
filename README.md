@@ -93,6 +93,7 @@ The only exception at this time is with the `HTTP POST /api/registration/broadca
 30. In the far right column, enter the EBS security group
 31. To prevent RDS from being publically accessible, go to RDS > instances > expand instance > Instance Actions > Modify
 32. Set publically accessible to no
+33. Set https only on the load balancer. Create a SSL certificate in Certificate Manager. In Elastic Beanstalk application configuration, go to settings of Load Balancer; turn off Listener Port and turn On Secure Listener Support (and assign the SSL certificate that was created in Certificate Manager.
 
 _Note the following AWS gotchas:_
 - You must name the main file `application.py`
