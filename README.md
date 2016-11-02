@@ -107,15 +107,17 @@ When new changes are committed and need to be deployed to production, simply run
 
 ## TODOs
 
-- Hook up with https://github.com/openemr/openemr/pull/257
-- Purchase domain name/SSL cert and setup/document Route 53 configuration
-- Testing and code reviews
 - Find/create "OEMR 501(c)(3) Shared Secrets" document
-- Deploy service in a production context (setup RDS in production mode, move out of the Amazon SES sandbox mode, and update these docs)
+- Deploy service in a production context
+  - production RDS settings (multi AZ, backups, migrate legimate dev data)
+  - set up Amazon SES non-sandbox mode
+  - ensure ELB has at least one instance up at all times
+  - update this README with new configuration steps
 
 ## POST VERSION 1.0.0 TODOs
 
 - Allow for custom HTML emails
+- Allow users to re-registration of email addresses
 - Allow users to "opt-out" of emails
 - Use a open-emr.org noreply email sender instead of the gmail sender
 - Store registration IP address in table to prevent spam (?)
