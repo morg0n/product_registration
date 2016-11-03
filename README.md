@@ -140,12 +140,10 @@ When new changes are committed and need to be deployed to production, simply run
 
 ## TODOs
 
-- Find/create "OEMR 501(c)(3) Shared Secrets" document
-- Deploy service in a production context
-  - production RDS settings (multi AZ, backups, migrate legimate dev data)
-  - set up Amazon SES non-sandbox mode
-  - ensure ELB has at least one instance up at all times
-  - update this README with new configuration steps
+- create "OEMR 501(c)(3) Shared Secrets" document
+- migrate legimate dev data
+- test emailer when in non-sandbox mode
+- point domain to prod and set for https mode only (last step in deploy section)
 
 ## POST VERSION 1.0.0 TODOs
 
