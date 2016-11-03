@@ -1,6 +1,6 @@
 # OpenEMR Product Registration
 
-This is a very simple REST service that allows new and current OpenEMR users to register their product with OEMR 501(c)(3). In return, they will receive important software update and security patch email updates. This service will run on AWS (EC2/EB/SES/RDS) and users of OpenEMR submit their email that will be sent to this remote server.
+This is a very simple REST service that allows new and current OpenEMR users to register their product with OEMR 501(c)(3). In return, they will receive important software update and security patch email updates. This service will run on AWS (EC2/EBS/SES/RDS) and users of OpenEMR submit their email that will be sent to this remote server.
 
 ## REST API OVERVIEW
 
@@ -48,7 +48,7 @@ __Spin up server (local development):__
 > python app.py --dev
 ```
 
-## i18n
+## TRANSLATIONS
 
 This service is simple enough at the moment that the HTTP return statuses will indicate what to display to a consumer with reading the contents of the message. For instance, `AlreadyRegisteredException` throws a HTTP 409 and `InvalidEmailException` throws a HTTP 400. Both of these statuses will be handled in OpenEMR layer with custom user messages that are translated.
 
@@ -61,39 +61,72 @@ The only exception at this time is with the `HTTP POST /api/registration/broadca
 
 ## DEPLOY
 
-1. Follow steps in above section with the exception of setting environment variables in config.py.
-2. Go to RDS > Get started now > Mysql (free tier) > "Only show options that are eligble for RDS Free Tier"
-3. Enter 5.6.27 for DB Engine version
-4. Select db.t1.micro for DB instance class
-5. Enter product-registration for "DB instance instance identifier"
-6. Enter username/password
-7. Accept default options and Launch DB instance
-8. Click "View your db instances" and wait a few moments
-9. Note the endpoint
-10. Using your favorite database tool (e.x.: MySQL Workbench), run schema.sql against the new RDS instance
-11. Go to SES > Manage Identities > Email addresses > Verify a new email address
-12. Enter in "openemrnoreply@gmail.com"
-13. Click verify this email address
-14. Go to gmail and wait for the verification link to come in
-15. `> eb init product-registration`
-16. For region, enter 1
-17. To get access/secret keys, go to IAM Console > Users > IAM user > Security Credentials > Create Access Key
-18. Specify Python 2.7 for the platform
-19. Enter n for SSH
-20. `> eb create`
-21. Enter product-registration for environment name
-22. Enter product-registration for DNS CNAME prefix
-23. Enter 1 for load balancer type and wait a few moments
-24. Note the elastic beanstalk address
-25. Note the elastic beanstalk security group
-26. To set environment variables, go to Elastic Beanstalk > All Applications > product-registration > Configuration > Software Configuration > Environment Properties
-27. To allow Elastic Beanstalk to connect to RDS, go to RDS > instances > expand instance > Instance Actions > See Details
-28. Click on the security group
-29. With the security group page in view, right click on the security group and select "Edit inbounds rules"
-30. In the far right column, enter the EBS security group
-31. To prevent RDS from being publically accessible, go to RDS > instances > expand instance > Instance Actions > Modify
-32. Set publically accessible to no
-33. Set https only on the load balancer. Create a SSL certificate in Certificate Manager. In Elastic Beanstalk application configuration, go to settings of Load Balancer; turn off Listener Port and turn On Secure Listener Support (and assign the SSL certificate that was created in Certificate Manager.
+1. Go to RDS > Get started now > Mysql Production
+2. DB Engine version: 5.6.27
+3. DB instance class: db.t2.large
+4. Multi-AZ Deployment: “Yes”
+5. Storage Type: General Purpose SSD
+6. Allocated Storage: 10GB
+7. DB Instance Identifier: production-product-registration
+8. Enter username/password
+9. Accept default options (except for db name of product_registration, and Backup Retention Period to 3 days) and Launch DB instance
+10. Click "View your db instances" and wait a few moments
+11. Note the endpoint
+12. Using your favorite database tool (e.x.: MySQL Workbench), run schema.sql against the new RDS instance (excluding the first line that is `CREATE SCHEMA product_registration` because RDS already created it)
+13. Go to SES > Manage Identities > Email addresses > Verify a new email address
+14. Enter in "openemrnoreply@gmail.com"
+15. Click verify this email address
+16. Go to gmail and wait for the verification link to come in
+17. Visit this link to submit request to get out of SES sandbox mode: http://aws.amazon.com/ses/extendedaccessrequest/
+18. Regarding: Service Limit Increase
+19. Limit Type: SES Sending Limits
+20. Region: US East (Northern Virginia)
+21. Limit: Desired Maximum Send Rate
+22. New limit rate: 300
+23. Mail Type: System Notifications
+24. Website URL http://open-emr.org
+25. My email-sending complies with the AWS Service Terms and AUP: yes
+26. I only send to recipients who have specifically requested my mail: yes
+27. I have a process to handle bounces and complaints: yes
+28. Use Case Description: OEMR is a non-profit organization formed to ensure that all people, regardless of race, socioeconomic status or geographic location, have access to high-quality medical care through the donation of free, open source medical software and service relating to that software. OEMR is interested in having SES deliver notifications to our registered users.
+29. Support Language: English
+30. Contact method: Web
+31. `> eb init production-product-registration`
+32. region: 1
+33. aws-access-id: (IAM oemr access)
+34. aws-secret-key: (IAM oemr secret)
+35. Specify Python 2.7 for the platform
+36. Enter n for SSH
+37. `> eb create`
+38. Enter production-product-registration for environment name
+39. Enter production-product-registration for DNS CNAME prefix
+40. Enter 1 for load balancer type and wait a few moments for environment to be provisioned
+41. Note the elastic beanstalk address
+42. Note the elastic beanstalk security group
+43. To set environment variables, go to Elastic Beanstalk > All Applications > product-registration > Configuration > Software Configuration > Environment Properties
+44. AWS_ACCESS_ID: (IAM oemr access)
+45. AWS_SECRET_KEY: (IAM oemr secret)
+46. DB_CONN_STR: mysql+pymysql://prod_user:prod_pass@prod_rds_endpoint/product_registration
+47. SECRET_PIN: (secret pin)
+48. SES_REGION: us-west-2
+49. SES_SENDER: openemrnoreply@gmail.com
+50. To prevent RDS from being publically accessible, go to RDS > instances > expand instance > Instance Actions > Modify
+51. Set publically accessible to no
+52. To allow Elastic Beanstalk to connect to RDS, go to RDS > instances > expand instance > Instance Actions > See Details
+53. Click on the security group link
+54. With the security group page in view, right click on the security group and select "Edit inbounds rules"
+55. In the far right column, enter the EBS security group
+56. To set Elastic Beanstalk to always have 1 instance up at any given time, go to Elastic Beanstalk > All Applications > product-registration > Configuration > Auto Scaling
+57. Minimum instance count: 1
+58. Maximum instance count: 2
+59. Set https only on the load balancer. Create a SSL certificate in Certificate Manager. In Elastic Beanstalk application configuration, go to settings of Load Balancer; turn off Listener Port and turn On Secure Listener Support (and assign the SSL certificate that was created in Certificate Manager.
+
+_Note the following about the oemr IAM user:_
+- is a service user
+- has the following permissions:
+  - IAMFullAccess
+  - AdministratorAccess
+  - AWSElasticBeanstalkService
 
 _Note the following AWS gotchas:_
 - You must name the main file `application.py`
@@ -107,12 +140,10 @@ When new changes are committed and need to be deployed to production, simply run
 
 ## TODOs
 
-- Find/create "OEMR 501(c)(3) Shared Secrets" document
-- Deploy service in a production context
-  - production RDS settings (multi AZ, backups, migrate legimate dev data)
-  - set up Amazon SES non-sandbox mode
-  - ensure ELB has at least one instance up at all times
-  - update this README with new configuration steps
+- create "OEMR 501(c)(3) Shared Secrets" document
+- migrate legimate dev data
+- test emailer when in non-sandbox mode
+- point domain to prod and set for https mode only (last step in deploy section)
 
 ## POST VERSION 1.0.0 TODOs
 
@@ -128,7 +159,7 @@ Greetings OEMR 501(c)(3) board. This section intends to explain, in plain englis
 
 - To see how many users have registered their OpenEMR instance, direct your browser to [https://reg.open-emr.org/api/registration/unique](https://reg.open-emr.org/api/registration/unique). This will return a count of registered users. Please note you will need to total this number with that of SourceForge downloads (there is overlap here, of course).
 
-- To email all registered users an important update email about OpenEMR, download and run [Postman](https://www.getpostman.com/) Chrome application. Config postman/compose your message as seen below (note the "secretPin" lives in the OEMR 501(c)(3) Shared Secrets document):
+- To email all registered users an important update email about OpenEMR, download and run [Postman](https://www.getpostman.com/) Chrome application. Configure postman/compose your message as seen below (note the "secretPin" lives in the OEMR 501(c)(3) Shared Secrets document):
 
 ![img](instructions-for-emailer.png)
 
