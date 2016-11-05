@@ -120,7 +120,7 @@ The only exception at this time is with the `HTTP POST /api/registration/broadca
 57. Minimum instance count: 1
 58. Maximum instance count: 2
 59. Set https only on the load balancer. Create a SSL certificate in Certificate Manager. In Elastic Beanstalk application configuration, go to settings of Load Balancer; turn off Listener Port and turn On Secure Listener Support (and assign the SSL certificate that was created in Certificate Manager.
-60. Set the database retention retention window on the RDS instance to 35 days.
+60. Set the database retention retention window on the RDS instance to 35 days(RDS > instances > expand instance > Instance Actions > Modify).
 
 _Note the following about the oemr IAM user:_
 - is a service user
