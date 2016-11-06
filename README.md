@@ -108,7 +108,7 @@ The only exception at this time is with the `HTTP POST /api/registration/broadca
 45. AWS_SECRET_KEY: (IAM oemr secret)
 46. DB_CONN_STR: mysql+pymysql://prod_user:prod_pass@prod_rds_endpoint/product_registration
 47. SECRET_PIN: (secret pin)
-48. SES_REGION: us-west-2
+48. SES_REGION: us-east-1
 49. SES_SENDER: openemrnoreply@gmail.com
 50. To prevent RDS from being publically accessible, go to RDS > instances > expand instance > Instance Actions > Modify
 51. Set publically accessible to no
@@ -134,6 +134,7 @@ _Note the following AWS gotchas:_
 - You must name the Flask object `application`
 - You must call `application.run(host='0.0.0.0')` as `application.run()` doesn't expose the server properly
 - If you add a new environment variable, add it to environment-variables.config as eb needs a default
+- Pay close attention to what REGION you are setting up services in. For instance `us-east-1` is where SES is ran from. If `us-west-2` is specified in the SES emailer code, emails will _not_ send.
 
 ## PUSHING CHANGES
 
