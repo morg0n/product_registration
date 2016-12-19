@@ -1,6 +1,6 @@
 # OpenEMR Product Registration
 
-This is a very simple REST service that allows new and current OpenEMR users to register their product with OEMR 501(c)(3). In return, they will receive important software update and security patch email updates. This service will run on AWS (EC2/EBS/SES/RDS) and users of OpenEMR submit their email that will be sent to this remote server.
+This is a very simple REST service that allows new and current OpenEMR users to register their product with OEMR Non Profit. In return, they will receive important software update and security patch email updates. This service will run on AWS (EC2/EBS/SES/RDS) and users of OpenEMR submit their email that will be sent to this remote server.
 
 ## REST API OVERVIEW
 
@@ -52,7 +52,7 @@ __Spin up server (local development):__
 
 This service is simple enough at the moment that the HTTP return statuses will indicate what to display to a consumer with reading the contents of the message. For instance, `AlreadyRegisteredException` throws a HTTP 409 and `InvalidEmailException` throws a HTTP 400. Both of these statuses will be handled in OpenEMR layer with custom user messages that are translated.
 
-The only exception at this time is with the `HTTP POST /api/registration/broadcast` endpoint, which returns various HTTP responses that one will need to see the contents of (which are written in english). However, this is acceptable because this endpoint is to be used exclusively by the OEMR 501(c)(3) board which is all english speaking.
+The only exception at this time is with the `HTTP POST /api/registration/broadcast` endpoint, which returns various HTTP responses that one will need to see the contents of (which are written in english). However, this is acceptable because this endpoint is to be used exclusively by the OEMR Non Profit board which is all english speaking.
 
 ## LOGS
 
@@ -142,7 +142,7 @@ When new changes are committed and need to be deployed to production, simply run
 
 ## TODOs
 
-- create "OEMR 501(c)(3) Shared Secrets" document
+- create "OEMR Non Profit Shared Secrets" document
 - migrate legimate dev data
 - test emailer when in non-sandbox mode
 - point domain to prod and set for https mode only (last step in deploy section)
@@ -155,13 +155,13 @@ When new changes are committed and need to be deployed to production, simply run
 - Use a open-emr.org noreply email sender instead of the gmail sender
 - Store registration IP address in table to prevent spam (?)
 
-## OEMR 501(c)(3) INSTRUCTIONS
+## OEMR Non Profit INSTRUCTIONS
 
-Greetings OEMR 501(c)(3) board. This section intends to explain, in plain english, how to get information about registered users and send them important updates about OpenEMR via bulk emailing.
+Greetings OEMR Non Profit board. This section intends to explain, in plain english, how to get information about registered users and send them important updates about OpenEMR via bulk emailing.
 
 - To see how many users have registered their OpenEMR instance, direct your browser to [https://reg.open-emr.org/api/registration/unique](https://reg.open-emr.org/api/registration/unique). This will return a count of registered users. Please note you will need to total this number with that of SourceForge downloads (there is overlap here, of course).
 
-- To email all registered users an important update email about OpenEMR, download and run [Postman](https://www.getpostman.com/) Chrome application. Configure postman/compose your message as seen below (note the "secretPin" lives in the OEMR 501(c)(3) Shared Secrets document):
+- To email all registered users an important update email about OpenEMR, download and run [Postman](https://www.getpostman.com/) Chrome application. Configure postman/compose your message as seen below (note the "secretPin" lives in the OEMR Non Profit Shared Secrets document):
 
 ![img](instructions-for-emailer.png)
 
